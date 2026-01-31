@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body class="blue">
+
+<!-- ❌ NO NAVBAR HERE -->
+
+<div class="center-page">
+  <div class="form-box login-box">
+    <h1><i class="fa-solid fa-lock"></i> Login</h1>
+
+    <input type="email" id="email" placeholder="📧 Email">
+   <div class="password-box">
+  <input type="password" id="password" placeholder="🔑 Password">
+  <i class="fa-solid fa-eye" id="togglePassword"></i>
+</div>
+
+    <button id="loginBtn">
+      <i class="fa-solid fa-right-to-bracket"></i> Login
+    </button>
+
+    <button id="registerBtn">
+      <i class="fa-solid fa-user-plus"></i> Register
+    </button>
+  </div>
+</div>
+
+<!-- Firebase + Auth JS -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB0O5YxugGEb0-NmErnMa1V8ccGiOxKN4c",
+  authDomain: "notes-app-b23a4.firebaseapp.com",
+  projectId: "notes-app-b23a4",
+  storageBucket: "notes-app-b23a4.appspot.com",
+  messagingSenderId: "291987997272",
+  appId: "1:291987997272:web:f6b6d61a08b39dffbec02d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+loginBtn.onclick = () => {
+  loginBtn.disabled = true;
+  registerBtn.disabled = true;
+
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .then(() => {
+      showSuccess();
+    })
+    .catch(err => {
+      const box = document.querySelector(".login-box");
+      box.classList.add("shake");
+
+      setTimeout(() => box.classList.remove("shake"), 400);
+
+      alert(err.message);
+      loginBtn.disabled = false;
+      registerBtn.disabled = false;
+    });
+};
+
+
+
+registerBtn.onclick = () => {
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .then(() => window.location.href = "index.html")
+    .catch(err => alert(err.message));
+};
+</script>
+<script>
+const togglePassword = document.getElementById("togglePassword");
+const passwordInput = document.getElementById("password");
+
+togglePassword.addEventListener("click", () => {
+  const isPassword = passwordInput.type === "password";
+  passwordInput.type = isPassword ? "text" : "password";
+  togglePassword.classList.toggle("fa-eye");
+  togglePassword.classList.toggle("fa-eye-slash");
+});
+</script>
+<script>
+function showSuccess() {
+  const box = document.querySelector(".login-box");
+
+  // hide inputs & buttons
+  box.querySelectorAll("input, button").forEach(el => {
+    el.style.display = "none";
+  });
+
+  // create success icon
+  const success = document.createElement("div");
+  success.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+  success.className = "success-check";
+
+  box.appendChild(success);
+
+  // redirect after animation
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1000);
+}
+</script>
+
+</body>
+</html>

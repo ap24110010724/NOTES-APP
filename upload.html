@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Notes</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+
+<body class="blue">
+
+<div class="navbar">
+  <div class="nav-left">
+    <i class="fa-solid fa-book-open"></i> Smart Notes
+  </div>
+
+  <div class="nav-right">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="upload.html"><i class="fa-solid fa-upload"></i> Upload</a>
+    <!-- <span class="user-email" id="userEmail"></span> -->
+    <button class="logout-btn" onclick="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</div>
+
+<h1>⬆ Upload Notes</h1>
+
+<div class="form-box">
+  <input type="text" id="title" placeholder="Note Title">
+  <input type="text" id="subject" placeholder="Subject">
+  <input type="text" id="link" placeholder="PDF DRIVE Link">
+  <button id="saveBtn">Save Note</button>
+</div>
+
+<br>
+<a href="index.html">← Back to Home</a>
+
+<!-- 🔥 FIREBASE SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- 🔥 SINGLE FIREBASE INIT -->
+<script src="firebase-init.js"></script>
+
+<script>
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  document.getElementById("userEmail").textContent = user.email;
+});
+
+// SAVE NOTE
+
+</script>
+<script>
+document.getElementById("saveBtn").addEventListener("click", () => {
+  const titleInput = document.getElementById("title");
+  const subjectInput = document.getElementById("subject");
+  const linkInput = document.getElementById("link");
+
+  const title = titleInput.value.trim();
+  const subject = subjectInput.value.trim();
+  const link = linkInput.value.trim();
+
+  if (!title || !subject || !link) {
+    alert("Fill all fields");
+    return;
+  }
+  if (!link.includes("drive.google.com")) {
+  alert("Please upload PDF to Google Drive and paste link");
+  return;
+}
+
+  db.collection("notes").add({
+    title: title,
+    subject: subject,
+    link: link,
+    uid: auth.currentUser.uid,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    alert("✅ Note saved!");
+    window.location.href = "index.html";
+  })
+  .catch(err => {
+    console.error(err);
+    alert(err.message);
+  });
+});
+</script>
+
+</body>
+</html>

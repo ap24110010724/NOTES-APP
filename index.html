@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Notes App</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+
+<body class="blue">
+
+<!-- ===== NAVBAR ===== -->
+<div class="navbar">
+  <div class="nav-left">
+    <i class="fa-solid fa-book-open"></i> Smart Notes
+  </div>
+
+  <div class="nav-right">
+    <a href="index.html" id="homeLink">
+      <i class="fa-solid fa-house"></i> Home
+    </a>
+
+    <a href="upload.html" id="uploadLink">
+      <i class="fa-solid fa-upload"></i> Upload
+    </a>
+
+    <!-- <span class="user-email" id="userEmail"></span> -->
+
+    <button class="logout-btn" id="logoutBtn" onclick="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</div>
+<input
+  type="text"
+  id="searchInput"
+  placeholder="🔍 Search by subject"
+  class="search-box"
+/>
+
+<!-- ===== PAGE CONTENT ===== -->
+<h1>📚 Smart Notes Sharing App</h1>
+<p>View and download study notes</p>
+
+<div class="container" id="notesContainer">
+  <!-- Notes will appear here -->
+</div>
+
+<!-- ===== FIREBASE SDKs ===== -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- ===== FIREBASE INIT ===== -->
+<script src="firebase-init.js"></script>
+
+<!-- ===== NOTES LOGIC ===== -->
+<script src="script.js"></script>
+
+
+<!-- ===== NAVBAR LOGIC ===== -->
+<script>
+auth.onAuthStateChanged(user => {
+  const upload = document.getElementById("uploadLink");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const userEmail = document.getElementById("userEmail");
+
+  if (user) {
+    upload.style.display = "inline-flex";
+    logoutBtn.style.display = "inline-flex";
+    userEmail.textContent = user.email;
+  } else {
+    window.location.href = "login.html";
+  }
+});
+
+function logout() {
+  auth.signOut().then(() => {
+    window.location.href = "login.html";
+  });
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  document.body.classList.toggle("blue");
+
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "blue"
+  );
+}
+
+const savedTheme = localStorage.getItem("theme") || "blue";
+document.body.classList.add(savedTheme);
+</script>
+
+</body>
+</html>
